@@ -5,6 +5,8 @@ import interactions
 # Load the token from the .env file
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+if TOKEN is None:
+    raise ValueError("No token found in .env file")
 
 # Initialize the bot client
 bot = interactions.Client(token=TOKEN)
@@ -18,4 +20,13 @@ async def hello(ctx: interactions.SlashCommand):
     await ctx.send("Hello, world!")  # Bot responds with a message
 
 # Run the bot
-bot.start()
+try:
+    bot.start()
+except interactions.errors.LibraryException as e:
+    print(f"An error occurred: {e}")
+except KeyboardInterrupt:
+    print("Bot stopped by user.")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+
