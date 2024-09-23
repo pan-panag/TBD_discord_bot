@@ -22,7 +22,8 @@ tree = app_commands.CommandTree(client)
     description="Say hello to the bot"  # Command description shown in the menu
 )
 async def hello(interaction):
-    await interaction.response.send_message(f"Hello there, {interaction.user.mention}!")  # Bot responds with a message mentioning the user
+    # Bot responds with a message mentioning the user
+    await interaction.response.send_message(f"Hello there, {interaction.user.mention}!")
 
 @tree.command(
     name="ping",
