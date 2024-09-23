@@ -4,7 +4,9 @@ import discord
 from discord import app_commands
 
 # Load the token from the .env file
-load_dotenv()
+if not load_dotenv():
+    raise FileNotFoundError("No .env file found")
+
 TOKEN = os.getenv('DISCORD_TOKEN')
 if TOKEN is None:
     raise ValueError("No token found in .env file")
@@ -26,4 +28,13 @@ async def hello(interaction):
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
 
-client.run(TOKEN)
+if __name__ == '__main__':
+    try:
+        client.run(TOKEN)
+    except discord.errors.LoginFailure:
+        print("Invalid token provided")
+    except discord.errors.HTTPException as e:
+        print(f"HTTP error occurred: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
