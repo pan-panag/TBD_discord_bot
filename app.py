@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 import discord
 from discord import app_commands
 
+# Load the commands from the commands directory
+from commands.general import load_commands as general_setup
+
 # Load the token from the .env file
 if not load_dotenv():
     raise FileNotFoundError("No .env file found")
@@ -16,22 +19,6 @@ intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-# Define a slash command
-@tree.command(
-    name="hello",  # The name of the command in the / menu
-    description="Say hello to the bot"  # Command description shown in the menu
-)
-async def hello(interaction):
-    # Bot responds with a message mentioning the user
-    await interaction.response.send_message(f"Hello there, {interaction.user.mention}!")
-
-@tree.command(
-    name="ping",
-    description="Check the bot's latency"
-)
-async def ping(interaction):
-    await interaction.response.send_message(f"Pong! {round(client.latency * 1000)}ms")
-
 
 def print_list(l: list, msg: str):
     print(msg + ":")
@@ -39,9 +26,15 @@ def print_list(l: list, msg: str):
         print(f"\t{i}")
     print("End of " + msg)
 
+async def setup_commands():
+    await general_setup(tree)
+
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
+
+    await setup_commands()
+    
     synced = await tree.sync()
     print_list(synced, "Synced commands")
 
